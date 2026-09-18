@@ -655,6 +655,27 @@
   .persistence-note strong { color: var(--text); }
   .persistence-note p { margin: 0; }
 
+  .contact-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 20px 0 0;
+    box-shadow: var(--shadow);
+    max-width: 78ch;
+  }
+  .contact-card p { margin: 6px 0; line-height: 1.6; }
+  .contact-card p:first-child {
+    font-weight: 600;
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 18px;
+    margin-top: 0;
+    color: var(--text);
+  }
+  .contact-card a { color: var(--primary); text-decoration: none; font-weight: 500; }
+  .contact-card a:hover { text-decoration: underline; }
+
   .empty {
     padding: 40px;
     text-align: center;
@@ -662,16 +683,60 @@
     white-space: normal;
   }
 
+  /* Site nav (top of every page) */
+  .site-nav {
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .site-nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  .site-nav a:hover { color: var(--primary); }
+  .site-nav a.active { color: var(--text); pointer-events: none; }
+
+  footer a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  footer a:hover { text-decoration: underline; }
+
   @media (max-width: 640px) {
     .container { padding: 24px 16px 40px; }
     .actions { flex-direction: column; }
     .actions-left, .actions-right { width: 100%; }
     .actions button { width: 100%; }
+    /* Unfreeze the sticky columns on narrow screens so users can horizontally scroll the whole table */
+    .col-actions, .col-resort {
+      position: static;
+      left: auto;
+      z-index: auto;
+      background: transparent;
+      border-right: none;
+    }
+    thead .col-actions, thead .col-resort { background: var(--surface-2); }
+    /* Stack Home Resort dropdown and Use Year vertically to shrink cell width */
+    .resort-cell { flex-direction: column; gap: 4px; align-items: stretch; }
+    select.use-year-select { min-width: 0; width: 100%; }
+    /* Recommendation numbers wrap more gracefully */
+    .rec-numbers { gap: 20px; }
   }
 </style>
 </head>
 <body>
 <div class="container">
+  <nav class="site-nav">
+    <a href="/" class="active">Tool</a>
+    <a href="/about.html">About</a>
+  </nav>
   <header>
     <h1>DVC Resale Comparison Tool</h1>
     <p class="tagline">Enter contracts from resale broker sites to compare multiple contracts across the same or different resorts and make an informed decision on which is the best deal for your family. Once 3 or more contracts are entered select your preferred contract with the star and a recommended offer will generate. The recommended offer will price the one you want based on the best comp among the ones you've tracked. You may still want to submit an initial offer even lower but the recommended offer is where you want to land.</p>
@@ -722,6 +787,11 @@
 
   <div class="persistence-note">
     <p><strong>Save your work.</strong> Your contracts are encoded in this page's URL — bookmark this page or copy the shareable link to preserve them across sessions. Browsers can automatically clear stored data after periods of inactivity (Safari does this after ~7 days), so bookmarking or exporting to CSV is the safest way to keep a permanent record you can revisit or share with your family.</p>
+  </div>
+
+  <div class="contact-card">
+    <p>Questions welcome.</p>
+    <p>Email <a href="mailto:hello@resalecompare.com">hello@resalecompare.com</a> with questions about the tool, the DVC resale buying process, or a specific contract you're weighing. If you're comparing contracts and want help understanding the results, paste your shareable link into the email so we can see exactly what you've found.</p>
   </div>
 
   <footer>
@@ -1136,7 +1206,7 @@
   function renderAll() {
     const tbody = document.getElementById('rows');
     if (contracts.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="16"><div class="empty">No contracts yet. Click <strong>+ Add contract</strong> to start, or <strong>Load samples</strong> to try it out.</div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="16"><div class="empty">No contracts yet. Click <strong>+ Add contract</strong> below to start.</div></td></tr>`;
       document.getElementById('summaryBar').hidden = true;
       return;
     }
@@ -1328,7 +1398,6 @@
   }
 
   load();
-  if (contracts.length === 0) contracts = SAMPLES.map(s => ({ ...s }));
   bindEvents();
   renderAll();
 </script>
